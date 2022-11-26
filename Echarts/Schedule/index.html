@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- echarts的CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.0/dist/echarts.min.js"></script>
+</head>
+
+<body>
+    <div id="main" style="width: 600px;height:320px;"></div>
+    <script src='./index.js'></script>
+    <script type="text/javascript">
+        const projectSchedule = [
+            {
+                name: "项目1",
+                startDate: "2022-11-15",
+                endDate: '2022-11-20',
+                color: "pink"
+            },
+            {
+                name: "项目2",
+                startDate: "2022-11-21",
+                endDate: '2022-11-25',
+                color: "blue"
+
+            },
+            {
+                name: "项目3",
+                startDate: "2022-11-22",
+                endDate: '2022-11-24',
+                color: "yellow"
+
+            },
+            {
+                name: "项目4",
+                startDate: "2022-12-1",
+                endDate: '2022-12-10',
+                color: "red"
+
+            },
+
+        ]
+        // 基于准备好的dom，初始化echarts实例
+        const myChartDom = echarts.init(document.getElementById('main'));
+        //x轴的formatterDate return 日期+星期
+        let formatterData = setDate(new Date());
+        let serisedata = []
+        // 指定图表的配置项和数据
+        let option = {
+            title: {
+                text: ``,
+                textStyle: {
+                    color: "#FCFCFC"
+                }
+            },
+            backgroundColor: 'rgba(128, 128, 128, 0.5)',
+            tooltip: {
+                formatter:params=>{
+                    return `${params.data.name}:总计${params.data.totalDays}天`
+                }
+            },
+            toolbox: {
+                feature: {
+                    show: true,
+                    myLastWeek: {
+                        show: true,
+                        title: '上周',
+                        icon: 'path://m311.76426,325.87429c17.12161,0 30.99998,-13.87924 30.99998,-31c0,-17.1208 -13.87836,-31.00001 -30.99998,-31.00001c-17.12078,0 -30.99999,13.87921 -30.99999,31.00001c0,17.12076 13.87922,31 30.99999,31zm4.98034,-51.74072l7.54247,7.54659l-13.1965,13.19575l13.1965,13.19655l-7.54247,7.5441l-20.73828,-20.74065l20.73828,-20.74234l0,0z',
+                        onclick: () => {
+                            formatterData = setDate(addDate(currentFirstDate, -7));
+                            // monthView.innerHTML = `${formatterData[0].split('-')[1]}月`
+                            handle(projectSchedule)
+                            // 更新视图
+                            myChartDom.setOption(option);
+                        }
+                    },
+                    myNextWeek: {
+                        show: true,
+                        title: '下周',
+                        icon: 'path://m235.63452,231.03916c-15.74008,0 -28.50001,12.3122 -28.50001,27.49999c0,15.18773 12.75993,27.49999 28.50001,27.49999c15.74007,0 28.49999,-12.31226 28.49999,-27.49999c0,-15.18779 -12.75992,-27.49999 -28.49999,-27.49999zm-4.57869,45.90118l-6.93427,-6.69677l12.13233,-11.70588l-12.13233,-11.70587l6.93427,-6.69098l19.06804,18.39685l-19.06804,18.40265z',
+                        onclick: () => {
+                            formatterData = setDate(addDate(currentFirstDate, 7));
+                            // monthView.innerHTML = `${formatterData[0].split('-')[1]}月`
+                            handle(projectSchedule)
+                            // 更新视图
+                            myChartDom.setOption(option);
+                        }
+                    }
+                }
+            },
+            xAxis: {
+                min: 0,
+                max: 7,
+                splitNumber: 8,
+                type: 'value',
+                axisLine: {
+                    lineStyle: {
+                        color: 'white',
+                    },
+                },
+                splitLine: {
+                    show: true,
+                    lineStyle: {
+                        color: 'rgba(0,255,255,0.8)',
+                    },
+                },
+                axisLabel: {
+                    // 设置x轴的每一项是日期+星期的展示方式
+                    formatter: (index) => {
+                        return formatterData[index] ? `${formatterData[index].split('-')[2]}${formatterData[index].split('-')[3]}` : formatterData[index]
+                    },
+                    align: 'end',
+                    padding: [0, 0, 0, 10],
+                },
+                position: 'top',
+            },
+            yAxis: {
+
+                type: 'category',
+
+                splitLine: { show: false },
+
+                show: false,
+
+                position: 'left',
+            },
+            series: [
+                {
+                    name: '空白占位区域',
+                    type: 'bar',
+                    stack: '1',
+                    itemStyle: {
+                        barBorderColor: 'rgba(0,0,0,0)',
+                        color: 'rgba(0,0,0,0)',
+                    },
+                    data: []
+                },
+                {
+                    stack: '1',
+                    type: 'bar',
+                    label: {
+                        show: true,
+                        formatter: params => params.data.name
+                    },
+                    colorBy: 'data',
+                    emphasis: {
+                        itemStyle: {
+                            opacity: 0.8,
+                        },
+
+                    },
+                    selec: {
+                        itemStyle: {
+                            color: 'inherit',
+                        },
+                    },
+                    data: []
+                }
+            ]
+        };
+        handle(projectSchedule)
+        myChartDom.setOption(option);
+    </script>
+
+
+
+</body>
+
+</html>
